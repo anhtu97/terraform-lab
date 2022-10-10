@@ -1,8 +1,25 @@
 provider "google" {
-  project     = "ivory-amphora-363115"
-  region      = "us-central1"
-  zone        = "us-central1-a"
+  project     = var.project_name
+  region      = var.region
+  zone        = var.zone
   credentials = file("account.json")
+}
+
+resource "google_compute_network" "isitdtu_network" {
+  name = var.network_name
+}
+
+resource "google_compute_firewall" "web" {
+  name    = var.firewall_rule_name
+  network = google_compute_network.isitdtu_network.name
+
+  allow {
+    protocol = var.firewall_protocol
+    ports    = var.firewall_ports
+  }
+
+  target_tags   = var.tags
+  source_ranges = var.firewall_source_ranges
 }
 
 resource "google_compute_instance" "isitdtu" {
@@ -20,7 +37,7 @@ resource "google_compute_instance" "isitdtu" {
   }
 
   network_interface {
-    network = "default"
+    network = google_compute_network.isitdtu_network.name
 
     access_config {
       // Ephemeral public IP
