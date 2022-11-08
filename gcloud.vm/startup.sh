@@ -46,8 +46,7 @@ sudo systemctl enable ctfd
 sudo systemctl start ctfd
 
 # Setting reverse proxy
-echo """
-{
+echo """{
     auto_https off
 }
 http://:80 {
@@ -55,8 +54,7 @@ http://:80 {
 }
 """ > /etc/caddy/Caddyfile
 
-cd /etc/caddy/
-caddy reload
+systemctl restart caddy
 
 # replace config 
 sed -i "s/REDIS_URL =/REDIS_URL = redis:\/\/localhost:6379/g" /var/www/CTFd/CTFd/config.ini
